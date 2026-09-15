@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Pahlawan Berbagi - Zakat, Infak, Sedekah</title>
+<style>
+:root{
+  --bg:#eef7ff;--card:#fff;--ink:#17324d;--muted:#61758a;--primary:#1666d9;
+  --primary2:#0e4ea8;--success:#168a55;--danger:#c73b3b;--gold:#f5b700;
+  --shadow:0 12px 30px rgba(31,72,112,.14);--radius:22px
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:
+radial-gradient(circle at 10% 10%,#dff3ff 0 18%,transparent 35%),
+radial-gradient(circle at 90% 20%,#fff1c9 0 15%,transparent 34%),var(--bg);color:var(--ink);min-height:100vh}
+button,input{font:inherit}
+button{cursor:pointer;border:0}
+.app{max-width:1050px;margin:auto;padding:18px}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}
+.brand{font-weight:900;letter-spacing:.3px}
+.sound{background:#fff;border:2px solid #dce8f4;border-radius:14px;padding:9px 13px;color:var(--ink)}
+.screen{display:none}.screen.active{display:block}
+.card{background:rgba(255,255,255,.95);border:1px solid #e0ebf5;border-radius:var(--radius);box-shadow:var(--shadow);padding:28px}
+.hero{text-align:center;padding:42px 24px}
+.hero-icon{font-size:72px;animation:float 2.8s ease-in-out infinite}
+@keyframes float{50%{transform:translateY(-8px)}}
+h1{font-size:clamp(34px,7vw,66px);margin:10px 0 0;line-height:1}
+h2{margin-top:0;font-size:clamp(24px,4vw,36px)}
+.subtitle{font-size:18px;color:var(--muted);margin:12px auto 24px;max-width:650px}
+.btns{display:flex;flex-wrap:wrap;justify-content:center;gap:12px}
+.btn{padding:13px 19px;border-radius:15px;font-weight:800;transition:.18s transform,.18s box-shadow}
+.btn:hover{transform:translateY(-2px)}.btn:focus-visible{outline:4px solid #9bc7ff}
+.primary{background:var(--primary);color:#fff;box-shadow:0 7px 15px #1666d933}
+.secondary{background:#eaf3ff;color:#1454a3}.light{background:#fff;border:2px solid #dce8f4;color:var(--ink)}
+.danger{background:#fff0f0;color:var(--danger)}
+.field{max-width:520px;margin:18px auto}.field label{display:block;font-weight:800;margin-bottom:8px}
+.field input{width:100%;padding:14px;border:2px solid #d6e4f1;border-radius:14px;outline:0}
+.field input:focus{border-color:var(--primary)}
+.instructions,.goals{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin:20px 0}
+.info{padding:18px;background:#f7fbff;border:1px solid #e0edf8;border-radius:16px}
+.info b{display:block;margin-bottom:5px}.muted{color:var(--muted)}
+.hud{display:grid;grid-template-columns:1fr auto auto auto;gap:10px;align-items:center;margin-bottom:14px}
+.progress{height:13px;background:#dce9f4;border-radius:20px;overflow:hidden}.progress>div{height:100%;background:linear-gradient(90deg,var(--primary),#49a7ff);transition:.35s;width:0}
+.pill{background:#fff;border:1px solid #dce8f4;padding:9px 12px;border-radius:14px;font-weight:800;white-space:nowrap}
+.question{font-size:clamp(19px,3vw,26px);font-weight:800;line-height:1.45;margin:12px 0 20px}
+.options{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.option{text-align:left;padding:16px;border:2px solid #dce8f4;background:#fff;border-radius:16px;font-weight:700;min-height:64px}
+.option:hover{border-color:#8abaf0;background:#f5faff}.option.correct{border-color:var(--success);background:#eafaf2}.option.wrong{border-color:var(--danger);background:#fff0f0}
+.feedback{min-height:48px;margin:16px 0;padding:12px 15px;border-radius:14px;background:#f7fbff;line-height:1.5}
+.feedback.ok{background:#eafaf2;color:#11613d}.feedback.bad{background:#fff0f0;color:#8d2929}
+.nextrow{display:flex;justify-content:flex-end;margin-top:12px}
+.drag-grid{display:grid;grid-template-columns:1fr 1.2fr;gap:18px}
+.items{display:grid;gap:10px}
+.drag-item{padding:14px;background:#fff;border:2px dashed #aac7df;border-radius:14px;font-weight:700;touch-action:none}
+.drag-item.selected{outline:4px solid #9bc7ff;background:#eef7ff}
+.targets{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.target{min-height:170px;border:3px dashed #b6cce0;border-radius:18px;padding:15px;background:#f8fbff;text-align:center}
+.target h3{margin:4px 0 12px}.target.over,.target.selected-target{border-color:var(--primary);background:#edf6ff}
+.target .placed{font-size:14px;background:#fff;border-radius:10px;padding:7px;margin:6px 0;border:1px solid #dce8f4}
+.scenario{background:#fff8e7;border:1px solid #f0dfac;padding:17px;border-radius:16px;margin-bottom:15px}
+.choice-list{display:grid;gap:11px}
+.map{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin:20px 0}
+.location{padding:20px 8px;border-radius:18px;background:#f7fbff;border:2px solid #dce8f4;text-align:center;font-weight:800}
+.location.done{border-color:#8fd0ad;background:#ecfbf3}.location.locked{opacity:.55}
+.badge{display:inline-block;padding:7px 11px;border-radius:999px;background:#fff3c7;color:#775500;font-weight:800}
+.result-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:20px 0}
+.stat{background:#f7fbff;border-radius:17px;padding:17px;text-align:center}.stat strong{display:block;font-size:28px}
+.rank{text-align:center;font-size:24px;font-weight:900;padding:18px;background:#fff8dc;border-radius:18px}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(20px);opacity:0;background:#17324d;color:#fff;padding:12px 17px;border-radius:13px;transition:.25s;z-index:20;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:30}
+.confetti i{position:absolute;top:-20px;width:10px;height:16px;animation:fall 1.4s linear forwards}
+.loading-screen{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .6s ease}
+.loading-screen.hidden{opacity:0;pointer-events:none}
+.spinner-wrap{position:relative;width:120px;height:120px;display:flex;justify-content:center;align-items:center;margin-bottom:24px}
+.spin-out,.spin-in{position:absolute;border-radius:50%;border:4px dashed}
+.spin-out{width:100%;height:100%;border-color:var(--primary);animation:spin 4s linear infinite}
+.spin-in{width:70%;height:70%;border-color:var(--gold);animation:spin-rev 3s linear infinite}
+.spin-icon{font-size:52px;animation:bounce 1.5s infinite;z-index:10}
+.load-txt{color:var(--primary);font-size:24px;font-weight:900;margin-bottom:16px;animation:pulse 2s infinite}
+.load-bar{width:220px;height:10px;background:#dce9f4;border-radius:10px;overflow:hidden}
+.load-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--gold),#ff9900);transition:width .2s}
+@keyframes spin{100%{transform:rotate(360deg)}}
+@keyframes spin-rev{100%{transform:rotate(-360deg)}}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-15px)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+@keyframes fall{to{transform:translateY(110vh) rotate(540deg);opacity:.2}}
+@media(max-width:700px){
+ .app{padding:10px}.card{padding:19px}.hero{padding:30px 14px}.options,.drag-grid{grid-template-columns:1fr}
+ .targets{grid-template-columns:1fr}.map{grid-template-columns:repeat(2,1fr)}
+ .hud{grid-template-columns:1fr 1fr}.hud .progress{grid-column:1/-1;grid-row:1}
+ .result-grid{grid-template-columns:1fr}.topbar{margin-bottom:8px}
+}
+@media(max-width:420px){.btn{width:100%}.btns{display:grid}.pill{font-size:13px;padding:8px}.map{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div id="loadingScreen" class="loading-screen">
+  <div class="spinner-wrap">
+    <div class="spin-out"></div>
+    <div class="spin-in"></div>
+    <div class="spin-icon">🕋</div>
+  </div>
+  <div class="load-txt">Memuat Petualangan...</div>
+  <div class="load-bar"><div id="loadFill" class="load-fill"></div></div>
+</div>
+
+<div class="app">
+  <div class="topbar">
+    <div class="brand">🦸 PAHLAWAN BERBAGI</div>
+    <button class="sound" id="soundBtn" aria-label="Nyalakan atau matikan suara">🔊 Suara ON</button>
+  </div>
+
+  <section id="home" class="screen">
+    <div class="card hero">
+      <div class="hero-icon">🦸‍♂️💚</div>
+      <h1>PAHLAWAN<br>BERBAGI</h1>
+      <div class="subtitle">Misi seru mempelajari <b>Zakat, Infak, dan Sedekah</b> untuk siswa Kelas VI.</div>
+      <div class="btns">
+        <button class="btn primary" onclick="show('identity')">▶ MULAI BERMAIN</button>
+        <button class="btn secondary" onclick="show('guide')">📖 PETUNJUK</button>
+        <button class="btn light" onclick="show('goals')">🎯 TUJUAN PEMBELAJARAN</button>
+        <button class="btn light" onclick="show('material')">📚 BELAJAR ZIS</button>
+        <button class="btn light" onclick="show('teacher')">📊 HASIL BELAJAR</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="identity" class="screen">
+    <div class="card">
+      <h2>👋 Siap Menjadi Pahlawan Berbagi?</h2>
+      <p class="muted">Masukkan identitasmu sebelum memulai misi.</p>
+      <div class="field"><label for="playerName">Nama</label><input id="playerName" maxlength="40" placeholder="Tulis nama kamu..."></div>
+      <div class="field"><label for="playerClass">Kelas</label><input id="playerClass" maxlength="20" placeholder="Contoh: VI A"></div>
+      <div class="btns">
+        <button class="btn primary" onclick="startGame()">🚀 MULAI MISI</button>
+        <button class="btn light" onclick="show('home')">← KEMBALI</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="guide" class="screen"><div class="card">
+    <h2>📖 Petunjuk Bermain</h2>
+    <div class="instructions">
+      <div class="info">🧩 <b>Selesaikan 5 Misi</b><span class="muted">Setiap misi menguji pemahamanmu dengan cara berbeda.</span></div>
+      <div class="info">⭐ <b>Kumpulkan Poin</b><span class="muted">Jawaban benar mendapat poin dan bonus.</span></div>
+      <div class="info">❤️ <b>Jaga Kesempatan</b><span class="muted">Kamu punya 3 hati pada setiap permainan.</span></div>
+      <div class="info">🤝 <b>Belajar Sambil Berbagi</b><span class="muted">Pilih tindakan yang sesuai nilai Islam.</span></div>
+    </div>
+    <p><b>Drag & Drop:</b> di HP, ketuk kartu lalu ketuk kotak tujuan. Di komputer, kartu juga bisa diseret.</p>
+    <button class="btn light" onclick="show('home')">← KEMBALI</button>
+  </div></section>
+
+  <section id="goals" class="screen"><div class="card">
+    <h2>🎯 Tujuan Pembelajaran</h2>
+    <div class="goals">
+      <div class="info">1️⃣ Menjelaskan pengertian zakat, infak, dan sedekah.</div>
+      <div class="info">2️⃣ Membedakan zakat, infak, dan sedekah.</div>
+      <div class="info">3️⃣ Mengenali contoh ZIS dalam kehidupan sehari-hari.</div>
+      <div class="info">4️⃣ Menjelaskan hikmah dan manfaat ZIS.</div>
+      <div class="info">5️⃣ Menunjukkan sikap peduli, ikhlas, dan suka berbagi.</div>
+      <div class="info">6️⃣ Menganalisis situasi sederhana terkait ZIS.</div>
+    </div>
+    <button class="btn light" onclick="show('home')">← KEMBALI</button>
+  </div></section>
+
+  <section id="material" class="screen"><div class="card">
+    <h2>📚 Belajar ZIS</h2>
+    <div class="instructions">
+      <div class="info"><b>💰 Zakat</b>Zakat adalah mengeluarkan sebagian harta tertentu yang wajib diberikan kepada orang yang berhak menerimanya sesuai ketentuan syariat Islam.</div>
+      <div class="info"><b>🤲 Infak</b>Infak adalah mengeluarkan sebagian harta untuk kepentingan yang baik sesuai ajaran Islam.</div>
+      <div class="info"><b>💚 Sedekah</b>Sedekah adalah pemberian atau perbuatan baik yang dilakukan dengan ikhlas untuk mendapatkan rida Allah Swt.</div>
+    </div>
+    <div class="info"><b>Perbedaan singkat</b>Zakat memiliki ketentuan wajib tertentu. Infak berkaitan dengan mengeluarkan harta untuk kebaikan. Sedekah lebih luas: dapat berupa harta maupun kebaikan nonmateri, seperti menolong dan tersenyum.</div>
+    <br><button class="btn light" onclick="show('home')">← KEMBALI</button>
+  </div></section>
+
+  <section id="game" class="screen">
+    <div class="hud">
+      <div class="progress"><div id="progressBar"></div></div>
+      <div class="pill">⭐ <span id="score">0</span></div>
+      <div class="pill">❤️ <span id="hearts">3</span></div>
+      <div class="pill">Misi <span id="missionNum">1</span>/5</div>
+    </div>
+    <div id="gameCard" class="card"></div>
+  </section>
+
+  <section id="map" class="screen"><div class="card">
+    <h2>🗺️ Peta Pahlawan Berbagi</h2>
+    <p class="muted">Selesaikan semua misi untuk menjadi Pahlawan Berbagi Sejati.</p>
+    <div id="mapGrid" class="map"></div>
+    <div class="btns"><button class="btn primary" onclick="beginNextMission()">🚀 LANJUTKAN MISI</button></div>
+  </div></section>
+
+  <section id="result" class="screen"><div class="card">
+    <div style="text-align:center;font-size:62px">🏆</div>
+    <h2 style="text-align:center">SELAMAT, PAHLAWAN BERBAGI!</h2>
+    <p id="resultText" style="text-align:center"></p>
+    <div id="resultGrid" class="result-grid"></div>
+    <div id="rank" class="rank"></div>
+    <div class="btns" style="margin-top:18px">
+      <button class="btn primary" onclick="restart()">🔄 MAIN LAGI</button>
+      <button class="btn secondary" onclick="show('material')">📖 BELAJAR LAGI</button>
+      <button class="btn light" onclick="show('home')">🏠 MENU UTAMA</button>
+    </div>
+  </div></section>
+
+  <section id="teacher" class="screen"><div class="card">
+    <h2>📊 Hasil Belajar</h2>
+    <div id="teacherResult"></div>
+    <div class="btns"><button class="btn light" onclick="show('home')">← MENU UTAMA</button></div>
+  </div></section>
+</div>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<div id="confetti" class="confetti"></div>
+
+<script>
+"use strict";
+
+window.addEventListener("load", () => {
+  let p = 0;
+  const bar = $("loadFill"), ls = $("loadingScreen");
+  const iv = setInterval(() => {
+    p += Math.floor(Math.random() * 20) + 10;
+    if (p >= 100) {
+      p = 100;
+      clearInterval(iv);
+      setTimeout(() => {
+        ls.classList.add("hidden");
+        setTimeout(() => {
+          $("home").classList.add("active");
+          ls.style.display = "none";
+        }, 600);
+      }, 400);
+    }
+    if (bar) bar.style.width = p + "%";
+  }, 200);
+});
+
+const missions = [
+ {type:"quiz", title:"🧠 Misi 1 — Kenali ZIS", intro:"Pilih jawaban yang paling tepat. Perhatikan kata kunci pada setiap situasi.", questions:[
+  {q:"Rina membayar zakat fitrah pada akhir Ramadan sesuai ketentuan. Perbuatan tersebut termasuk ...",o:["Infak","Sedekah","Zakat","Hadiah"],a:2,e:"Zakat memiliki ketentuan syariat dan salah satunya adalah zakat fitrah."},
+  {q:"Memberikan uang untuk membantu pembangunan masjid termasuk contoh ...",o:["Infak","Zakat fitrah","Hukuman","Jual beli"],a:0,e:"Mengeluarkan harta untuk kepentingan kebaikan termasuk infak."},
+  {q:"Senyum yang tulus kepada teman merupakan contoh sedekah karena ...",o:["Harus dibayar","Kebaikan dapat menjadi sedekah","Selalu berupa uang","Hanya dilakukan di masjid"],a:1,e:"Sedekah tidak hanya berupa harta; perbuatan baik juga dapat menjadi sedekah."},
+  {q:"Pernyataan yang paling tepat adalah ...",o:["Zakat dan infak selalu wajib","Sedekah hanya berupa uang","Zakat memiliki ketentuan wajib tertentu","Infak tidak boleh untuk kebaikan"],a:2,e:"Zakat memiliki syarat dan ketentuan tertentu dalam syariat."},
+  {q:"Salah satu tujuan berbagi melalui ZIS adalah ...",o:["Membuat orang lain malu","Membantu sesama dan mendekatkan diri kepada Allah","Mendapat pujian","Menghabiskan harta"],a:1,e:"ZIS mengajarkan kepedulian, keikhlasan, dan membantu orang yang membutuhkan."}
+ ]},
+ {type:"drag", title:"🧩 Misi 2 — Kelompokkan dengan Tepat", intro:"Kelompokkan kartu ke ZAKAT, INFAK, atau SEDEKAH. Di HP: ketuk kartu lalu ketuk kotak tujuan.", items:[
+  ["Membayar zakat fitrah","zakat"],["Mengeluarkan harta yang wajib sesuai syarat zakat","zakat"],
+  ["Menyumbang uang untuk korban bencana","infak"],["Memberikan uang untuk kegiatan masjid","infak"],
+  ["Memberikan makanan kepada tetangga","sedekah"],["Tersenyum dengan tulus kepada teman","sedekah"]
+ ]},
+ {type:"scenario", title:"🤝 Misi 3 — Pilih Tindakan Terbaik", intro:"Baca situasi, lalu pilih tindakan yang paling mencerminkan semangat berbagi.", questions:[
+  {q:"Kamu membawa dua bekal makanan, sedangkan temanmu lupa membawa bekal. Apa tindakan terbaik?",o:["Mengejeknya","Berbagi sebagian bekal dengan ikhlas","Menyembunyikan bekal","Meminta teman lain membayarnya"],a:1,e:"Berbagi makanan dengan ikhlas menunjukkan kepedulian kepada sesama."},
+  {q:"Di sekitar rumahmu ada korban bencana yang membutuhkan bantuan. Kamu ingin membantu dengan sebagian uang tabungan yang kamu miliki. Sikap yang tepat adalah ...",o:["Membantu sesuai kemampuan dan ikhlas","Memamerkan jumlah bantuan","Tidak membantu karena takut dipuji","Mengunggah bantuan agar terkenal"],a:0,e:"Bantuan sebaiknya diberikan sesuai kemampuan dan dengan niat yang baik."},
+  {q:"Seorang teman menerima bantuan lalu mengucapkan terima kasih. Sikapmu sebaiknya ...",o:["Menuntut balasan","Mengingatkan terus bantuanmu","Ikhlas dan tidak menyombongkan diri","Menceritakannya kepada semua orang"],a:2,e:"Berbagi sebaiknya dilakukan dengan ikhlas, bukan untuk kesombongan."},
+  {q:"Kamu melihat teman kesulitan memahami pelajaran. Bentuk sedekah yang dapat kamu lakukan adalah ...",o:["Membiarkannya","Menertawakannya","Membantu menjelaskan dengan sabar","Memintanya berhenti belajar"],a:2,e:"Menolong dan berbagi ilmu merupakan bentuk kebaikan."}
+ ]},
+ {type:"calculation", title:"💰 Misi 4 — Hitung dan Tentukan", intro:"Gunakan logika sederhana untuk menentukan tindakan yang tepat.", questions:[
+  {q:"Budi ingin menyisihkan uang Rp10.000 untuk membantu korban bencana. Tindakan tersebut paling tepat disebut ...",o:["Infak/sedekah","Zakat wajib","Denda","Hutang"],a:0,e:"Memberikan sebagian uang untuk kebaikan dapat termasuk infak atau sedekah."},
+  {q:"Siti memiliki 4 bungkus makanan. Ia memberikan 1 bungkus kepada tetangganya yang membutuhkan. Berapa bungkus yang tersisa?",o:["2","3","4","5"],a:1,e:"4 − 1 = 3 bungkus. Berbagi dapat dilakukan sesuai kemampuan."},
+  {q:"Ali menyisihkan Rp2.000 setiap Jumat untuk membantu orang yang membutuhkan. Setelah 4 Jumat, berapa uang yang terkumpul?",o:["Rp4.000","Rp6.000","Rp8.000","Rp10.000"],a:2,e:"Rp2.000 × 4 = Rp8.000."},
+  {q:"Dari uang Rp20.000, kamu menyisihkan Rp5.000 untuk infak. Berapa uang yang masih kamu pegang?",o:["Rp10.000","Rp12.000","Rp15.000","Rp25.000"],a:2,e:"Rp20.000 − Rp5.000 = Rp15.000."}
+ ]},
+ {type:"scenario", title:"🌟 Misi 5 — Pahlawan Berbagi", intro:"Ini misi terakhir. Pilih jawaban yang paling menunjukkan pemahaman dan akhlak mulia.", questions:[
+  {q:"Mengapa kita dianjurkan berbagi kepada sesama?",o:["Agar dipuji","Agar terlihat kaya","Untuk membantu sesama dan mencari rida Allah","Agar mendapat hadiah"],a:2,e:"Berbagi menumbuhkan kepedulian dan dilakukan untuk kebaikan serta mencari rida Allah."},
+  {q:"Ketika bersedekah, sikap yang paling baik adalah ...",o:["Ikhlas","Sombong","Pamer","Mengungkit pemberian"],a:0,e:"Keikhlasan adalah sikap penting dalam beramal."},
+  {q:"Kamu memiliki keterampilan menggambar. Sekolah mengadakan kegiatan amal dan kamu membantu membuat poster tanpa meminta bayaran. Ini menunjukkan ...",o:["Kepedulian dan sedekah melalui kebaikan","Sifat malas","Hanya mencari keuntungan","Tidak mau berbagi"],a:0,e:"Sedekah dapat berupa kebaikan, tenaga, waktu, dan keterampilan."},
+  {q:"Jika belum mampu memberikan uang, cara berbagi yang tetap dapat kamu lakukan adalah ...",o:["Tidak melakukan apa pun","Menolong, berbagi ilmu, dan berkata baik","Mengejek orang lain","Menunggu menjadi kaya"],a:1,e:"Kebaikan tidak selalu membutuhkan uang."},
+  {q:"Kesimpulan terbaik dari pembelajaran ZIS adalah ...",o:["Berbagi hanya untuk orang kaya","ZIS mengajarkan kepedulian, tanggung jawab, dan keikhlasan","Sedekah hanya boleh di sekolah","Infak selalu sama dengan zakat"],a:1,e:"ZIS membentuk kepedulian dan kebiasaan berbuat baik sesuai tuntunan Islam."}
+ ]}
+];
+
+const state={name:"",kelas:"",score:0,correct:0,wrong:0,hearts:3,mission:0,q:0,answered:false,dragDone:0,sound:true,completed:0};
+let audioCtx=null;
+
+function $(id){return document.getElementById(id)}
+function show(id){
+ document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+ $(id).classList.add("active");
+ if(id==="teacher") renderTeacher();
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+function startGame(){
+ const name=$("playerName").value.trim(), kelas=$("playerClass").value.trim();
+ if(!name){toast("Silakan tulis namamu terlebih dahulu.");$("playerName").focus();return}
+ state.name=name;state.kelas=kelas||"-";state.score=0;state.correct=0;state.wrong=0;state.hearts=3;state.mission=0;state.q=0;state.completed=0;
+ localStorage.setItem("pahlawanBerbagiLast",JSON.stringify({name:state.name,kelas:state.kelas}));
+ show("game");renderMission();
+}
+function restart(){startGame()}
+function beginNextMission(){show("game");renderMission()}
+function renderMission(){
+ const m=missions[state.mission]; state.q=0; state.answered=false; state.dragDone=0;
+ $("missionNum").textContent=state.mission+1;$("score").textContent=state.score;$("hearts").textContent=state.hearts;
+ $("progressBar").style.width=((state.mission/5)*100)+"%";
+ if(m.type==="drag") renderDrag(); else renderQuestion();
+}
+function renderQuestion(){
+ const m=missions[state.mission], data=m.questions[state.q];
+ $("gameCard").innerHTML=`<span class="badge">${m.title}</span><p class="muted">${m.intro}</p>
+ <div class="question">${state.q+1}. ${data.q}</div>
+ <div class="options">${data.o.map((x,i)=>`<button class="option" onclick="answer(${i})">${String.fromCharCode(65+i)}. ${x}</button>`).join("")}</div>
+ <div id="feedback" class="feedback" aria-live="polite">Pilih jawabanmu.</div>
+ <div class="nextrow"><button id="nextBtn" class="btn primary" style="display:none" onclick="nextQuestion()">LANJUT →</button></div>`;
+}
+function answer(i){
+ if(state.answered)return;state.answered=true;
+ const m=missions[state.mission],data=m.questions[state.q], buttons=[...document.querySelectorAll(".option")];
+ buttons.forEach((b,n)=>{b.disabled=true;if(n===data.a)b.classList.add("correct")});
+ const fb=$("feedback");
+ if(i===data.a){state.correct++;state.score+=10;fb.className="feedback ok";fb.innerHTML=`✅ <b>Benar!</b> ${data.e}`;sound(740,0.1);confetti(8)}
+ else{state.wrong++;state.score=Math.max(0,state.score-5);state.hearts--;buttons[i].classList.add("wrong");fb.className="feedback bad";fb.innerHTML=`❌ <b>Belum tepat.</b> ${data.e}`;sound(180,0.14)}
+ $("score").textContent=state.score;$("hearts").textContent=state.hearts;
+ $("nextBtn").style.display="inline-block";
+}
+function nextQuestion(){
+ const m=missions[state.mission];
+ if(state.hearts<=0){showGameOver();return}
+ state.q++;
+ if(state.q>=m.questions.length){completeMission();return}
+ state.answered=false;renderQuestion();
+}
+function showGameOver(){
+ $("gameCard").innerHTML=`<div style="text-align:center;font-size:58px">💪</div><h2 style="text-align:center">Jangan Menyerah!</h2>
+ <p style="text-align:center">Kesempatanmu habis. Yuk pelajari lagi materi ZIS dan coba kembali.</p>
+ <div class="btns"><button class="btn primary" onclick="restart()">🔄 COBA LAGI</button><button class="btn light" onclick="show('material')">📖 BELAJAR LAGI</button></div>`;
+}
+function completeMission(){
+ state.completed++;state.score+=20;
+ if(state.mission===missions.length-1){state.score+=50;showResult();return}
+ state.mission++;state.hearts=3;
+ renderMap();show("map");sound(880,0.18);confetti(18);
+}
+function renderMap(){
+ $("mapGrid").innerHTML=missions.map((m,i)=>`<div class="location ${i<state.mission?"done":i===state.mission?"":"locked"}">
+ <div style="font-size:34px">${i<state.mission?"✅":i===state.mission?"📍":"🔒"}</div>
+ ${i+1}. ${m.title.replace(/^.+?— /,"")}
+ </div>`).join("");
+}
+
+function renderDrag(){
+ const m=missions[state.mission];
+ $("gameCard").innerHTML=`<span class="badge">${m.title}</span><p class="muted">${m.intro}</p>
+ <div class="drag-grid"><div><h3>🃏 Kartu</h3><div id="dragItems" class="items"></div></div>
+ <div><h3>🎯 Kotak Tujuan</h3><div class="targets">
+ ${["zakat","infak","sedekah"].map(t=>`<div class="target" data-target="${t}" tabindex="0" aria-label="Kotak ${t}"><h3>${t.toUpperCase()}</h3><div class="target-content">Ketuk atau seret kartu ke sini</div></div>`).join("")}</div></div></div>
+ <div id="dragFeedback" class="feedback">Kartu yang sudah benar akan terkunci.</div>
+ <div class="nextrow"><button id="dragNext" class="btn primary" style="display:none" onclick="completeMission()">SELESAI MISI →</button></div>`;
+ const items=[...m.items].sort(()=>Math.random()-.5);
+ const box=$("dragItems");
+ items.forEach((it,idx)=>{
+  const el=document.createElement("div");el.className="drag-item";el.draggable=true;el.tabIndex=0;el.dataset.type=it[1];el.textContent=it[0];
+  el.addEventListener("dragstart",e=>{e.dataTransfer.setData("text/plain",idx);window.dragEl=el});
+  el.addEventListener("click",()=>selectDrag(el));
+  box.appendChild(el);
+ });
+ document.querySelectorAll(".target").forEach(t=>{
+  t.addEventListener("dragover",e=>{e.preventDefault();t.classList.add("over")});
+  t.addEventListener("dragleave",()=>t.classList.remove("over"));
+  t.addEventListener("drop",e=>{e.preventDefault();t.classList.remove("over");placeDrag(window.dragEl,t)});
+  t.addEventListener("click",()=>{if(window.selectedDrag)placeDrag(window.selectedDrag,t)});
+  t.addEventListener("keydown",e=>{if((e.key==="Enter"||e.key===" ")&&window.selectedDrag){e.preventDefault();placeDrag(window.selectedDrag,t)}});
+ });
+}
+function selectDrag(el){
+ if(el.classList.contains("placed"))return;
+ document.querySelectorAll(".drag-item.selected").forEach(x=>x.classList.remove("selected"));
+ el.classList.add("selected");window.selectedDrag=el;
+ toast("Sekarang pilih kotak Zakat, Infak, atau Sedekah.");
+}
+function placeDrag(el,target){
+ if(!el||el.classList.contains("placed"))return;
+ if(el.dataset.type===target.dataset.target){
+  el.classList.remove("selected");el.classList.add("placed");el.draggable=false;
+  const clone=document.createElement("div");clone.className="placed";clone.textContent="✅ "+el.textContent;
+  target.querySelector(".target-content").appendChild(clone);el.remove();
+  state.dragDone++;state.correct++;state.score+=10;$("score").textContent=state.score;
+  $("dragFeedback").className="feedback ok";$("dragFeedback").textContent=`✅ Tepat! ${state.dragDone}/${missions[state.mission].items.length} kartu sudah dikelompokkan.`;
+  sound(700,.08);confetti(3);
+  if(state.dragDone===missions[state.mission].items.length){state.score+=20;$("score").textContent=state.score;$("dragNext").style.display="inline-block";$("dragFeedback").innerHTML="🎉 <b>Semua kartu benar!</b> Kamu berhasil menyelesaikan misi."}
+ }else{
+  state.wrong++;state.score=Math.max(0,state.score-5);state.hearts--;$("score").textContent=state.score;$("hearts").textContent=state.hearts;
+  $("dragFeedback").className="feedback bad";$("dragFeedback").innerHTML="❌ Belum tepat. Coba perhatikan kembali pengertian masing-masing.";
+  sound(180,.12); if(state.hearts<=0)showGameOver();
+ }
+ window.selectedDrag=null;
+}
+
+function showResult(){
+ $("progressBar").style.width="100%";$("score").textContent=state.score;
+ const total=missions.reduce((n,m)=>n+(m.questions?m.questions.length:m.items.length),0);
+ const pct=Math.round(state.correct/total*100);
+ let rank=pct>=90?"🏆 Sangat Baik":pct>=80?"🌟 Baik":pct>=70?"👍 Cukup":"💪 Perlu Belajar Lagi";
+ $("resultText").innerHTML=`Hebat, <b>${escapeHTML(state.name)}</b>! Kamu telah menyelesaikan semua 5 misi.`;
+ $("resultGrid").innerHTML=`<div class="stat"><span>Skor</span><strong>${state.score}</strong></div><div class="stat"><span>Benar</span><strong>${state.correct}</strong></div><div class="stat"><span>Salah</span><strong>${state.wrong}</strong></div><div class="stat"><span>Keberhasilan</span><strong>${pct}%</strong></div><div class="stat"><span>Misi</span><strong>5/5</strong></div><div class="stat"><span>Predikat</span><strong>${rank.split(" ").slice(1).join(" ")}</strong></div>`;
+ $("rank").textContent=`${rank} — Gelar: ${pct>=90?"Pahlawan Berbagi Sejati":pct>=80?"Pahlawan Dermawan":pct>=70?"Sahabat Sesama":"Pejuang Berbagi"}`;
+ localStorage.setItem("pahlawanBerbagiResult",JSON.stringify({name:state.name,kelas:state.kelas,score:state.score,correct:state.correct,wrong:state.wrong,pct,rank}));
+ show("result");confetti(45);sound(980,.2);
+}
+function renderTeacher(){
+ const r=JSON.parse(localStorage.getItem("pahlawanBerbagiResult")||"null");
+ if(!r){$("teacherResult").innerHTML='<div class="info">Belum ada hasil permainan tersimpan.</div>';return}
+ $("teacherResult").innerHTML=`<div class="instructions">
+ <div class="info"><b>Nama</b>${escapeHTML(r.name)}</div><div class="info"><b>Kelas</b>${escapeHTML(r.kelas)}</div>
+ <div class="info"><b>Skor Akhir</b>${r.score}</div><div class="info"><b>Persentase</b>${r.pct}%</div>
+ <div class="info"><b>Jawaban Benar</b>${r.correct}</div><div class="info"><b>Jawaban Salah</b>${r.wrong}</div>
+ <div class="info"><b>Level Selesai</b>5/5</div><div class="info"><b>Predikat</b>${r.rank}</div></div>`;
+}
+function escapeHTML(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function toast(msg){const t=$("toast");t.textContent=msg;t.classList.add("show");clearTimeout(toast.timer);toast.timer=setTimeout(()=>t.classList.remove("show"),1800)}
+function confetti(n){
+ const c=$("confetti");for(let i=0;i<n;i++){const x=document.createElement("i");x.style.left=Math.random()*100+"%";x.style.animationDelay=Math.random()*.35+"s";x.style.transform=`rotate(${Math.random()*360}deg)`;x.style.background=["#1666d9","#f5b700","#168a55","#d94b4b","#8b5cf6"][Math.floor(Math.random()*5)];c.appendChild(x);setTimeout(()=>x.remove(),1600)}
+}
+function sound(freq,dur){
+ if(!state.sound)return;
+ try{audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.frequency.value=freq;o.type="sine";g.gain.setValueAtTime(.0001,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(.07,audioCtx.currentTime+.01);g.gain.exponentialRampToValueAtTime(.0001,audioCtx.currentTime+dur);o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+dur)}catch(e){}
+}
+$("soundBtn").addEventListener("click",()=>{state.sound=!state.sound;$("soundBtn").textContent=state.sound?"🔊 Suara ON":"🔇 Suara OFF";if(state.sound)sound(650,.08)});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&document.querySelector(".screen.active")?.id!=="home")show("home")});
+</script>
+</body>
+</html>
